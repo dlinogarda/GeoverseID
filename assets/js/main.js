@@ -1,7 +1,7 @@
 /**
-* Template Name: MySchool
-* Template URL: https://bootstrapmade.com/myschool-bootstrap-school-template/
-* Updated: Jul 28 2025 with Bootstrap v5.3.7
+* Template Name: Mentor
+* Template URL: https://bootstrapmade.com/mentor-free-education-bootstrap-theme/
+* Updated: Jul 07 2025 with Bootstrap v5.3.7
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
@@ -92,6 +92,31 @@
   document.addEventListener('scroll', toggleScrollTop);
 
   /**
+   * Animation on scroll function and init
+   */
+  function aosInit() {
+    AOS.init({
+      duration: 600,
+      easing: 'ease-in-out',
+      once: true,
+      mirror: false
+    });
+  }
+  window.addEventListener('load', aosInit);
+
+  /**
+   * Initiate glightbox
+   */
+  const glightbox = GLightbox({
+    selector: '.glightbox'
+  });
+
+  /**
+   * Initiate Pure Counter
+   */
+  new PureCounter();
+
+  /**
    * Init swiper sliders
    */
   function initSwiper() {
@@ -109,17 +134,5 @@
   }
 
   window.addEventListener("load", initSwiper);
-
-  /**
-   * Initiate Pure Counter
-   */
-  new PureCounter();
-
-  /**
-   * Initiate glightbox
-   */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
 
 })();

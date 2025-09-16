@@ -1,6 +1,6 @@
 Thanks for downloading this template!
 
-Template Name: Mentor
-Template URL: https://bootstrapmade.com/mentor-free-education-bootstrap-theme/
+Template Name: Clarity
+Template URL: https://bootstrapmade.com/clarity-bootstrap-agency-template/
 Author: BootstrapMade.com
 License: https://bootstrapmade.com/license/

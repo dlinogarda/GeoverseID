@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Contact - Mentor Bootstrap Template</title>
+  <title>Contact - GeoverseID</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -41,67 +41,90 @@
   function hide(el) { if (el) el.style.display = 'none'; }
   function show(el) { if (el) el.style.display = 'block'; }
   function setText(el, t) { if (el) el.textContent = t; }
+  function get(form, name) {
+    const el = form.querySelector(`[name="${name}"]`);
+    return (el && (el.value ?? '')).toString().trim();
+  }
+  function normalizeWA(num) {
+    if (!num) return '';
+    let n = num.replace(/\s+/g, '');
+    if (n.startsWith('0')) n = '+62' + n.slice(1);
+    return n;
+  }
+  function buildMessage(form) {
+    const lines = [
+      `Nama : ${get(form, 'name')}`,
+      `Email : ${get(form, 'email')}`,
+      `Nomor WhatsApp : ${normalizeWA(get(form, 'whatsapp'))}`,
+      `Usia : ${get(form, 'usia')}`,
+      `Pilih Kursus: ${get(form, 'kursus')}`,
+      `Kota Domisili: ${get(form, 'kota')}`,
+      `Darimana Anda Mengetahui Tentang GeoverseID Class?: ${get(form, 'sumber')}`
+    ];
+    const catatan = get(form, 'catatan');
+    if (catatan) lines.push(`Catatan Tambahan: ${catatan}`);
+
+    const msgField = form.querySelector('[name="message"]');
+    if (msgField) msgField.value = lines.join('\n');
+
+    // (Optional) auto-set subject if you DON'T show a Subject input:
+    // const subjEl = form.querySelector('[name="subject"]');
+    // if (subjEl && !subjEl.value) subjEl.value = `Pendaftaran ${get(form,'kursus')} - ${get(form,'name')}`;
+  }
 
   function wire(form) {
     if (!form) return;
-
-    // Find the status elements inside the form
     const loading = form.querySelector('.loading');
     const errorBox = form.querySelector('.error-message');
     const sentBox = form.querySelector('.sent-message');
-
-    // Start hidden
     hide(loading); hide(errorBox); hide(sentBox);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Honeypot: if filled, silently ignore
+      // Honeypot
       const hp = form.querySelector('input[name="_gotcha"]');
       if (hp && hp.value) return;
 
-      hide(errorBox); hide(sentBox); show(loading);
+      // Build the combined message before sending
+      buildMessage(form);
 
+      hide(errorBox); hide(sentBox); show(loading);
       try {
         const r = await fetch(form.action, {
           method: form.method || 'POST',
           headers: { 'Accept': 'application/json' },
           body: new FormData(form)
         });
-
         hide(loading);
-
         if (r.ok) {
           form.reset();
           show(sentBox);
-          // auto-hide success after a few seconds (optional)
           setTimeout(() => hide(sentBox), 6000);
         } else {
-          let msg = 'Sorry, something went wrong. Please try again.';
+          let msg = 'Maaf, terjadi kesalahan. Silakan coba lagi.';
           try {
             const data = await r.json();
-            if (data && data.errors) {
-              msg = data.errors.map(e => e.message).join(', ');
-            }
+            if (data && data.errors) msg = data.errors.map(e => e.message).join(', ');
           } catch (_) {}
           setText(errorBox, msg);
           show(errorBox);
         }
       } catch (err) {
         hide(loading);
-        setText(errorBox, 'Network error — please try again.');
+        setText(errorBox, 'Gangguan jaringan — silakan coba lagi.');
         show(errorBox);
       }
     });
   }
 
-  // Wire all relevant forms on the page
   document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('form.php-email-form, form#contact-form, form#newsletter-form')
-      .forEach(wire);
+    // Use your actual selector/id for the form
+    document.querySelectorAll('form[action^="https://formspree.io/"]').forEach(wire);
   });
 })();
 </script>
+
 
 <body class="contact-page">
 
@@ -111,7 +134,7 @@
       <a href="index.html" class="logo d-flex align-items-center me-auto">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename">Mentor</h1>
+        <h1 class="sitename">GeoverseID.CLASS</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -120,8 +143,8 @@
           <li><a href="about.html">About</a></li>
           <li><a href="courses.html">Courses</a></li>
           <li><a href="trainers.html">Trainers</a></li>
-          <!--<li><a href="events.html">Events</a></li> -->
-          <li><a href="pricing.html">Pricing</a></li>
+          <!-- <li><a href="events.html">Events</a></li> -->
+          <!-- <li><a href="pricing.html">Pricing</a></li> -->
           <!--
           <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
@@ -141,12 +164,12 @@
             </ul>
           </li>
         -->
-          <li><a href="contact.html" class="active">Contact</a></li>
+          <li><a href="contact.html" class="active">Kontak</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="courses.html">Get Started</a>
+      <a class="btn-getstarted" href="courses.html">Ambil kelas</a>
 
     </div>
   </header>
@@ -159,8 +182,8 @@
         <div class="container">
           <div class="row d-flex justify-content-center text-center">
             <div class="col-lg-8">
-              <h1>Contact</h1>
-              <p class="mb-0">Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+              <h1>Kontak</h1>
+              <p class="mb-0">.</p>
             </div>
           </div>
         </div>
@@ -169,7 +192,7 @@
         <div class="container">
           <ol>
             <li><a href="index.html">Home</a></li>
-            <li class="current">Contact</li>
+            <li class="current">Kontak</li>
           </ol>
         </div>
       </nav>
@@ -190,26 +213,39 @@
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
               <i class="bi bi-geo-alt flex-shrink-0"></i>
               <div>
-                <h3>Address</h3>
-                <p>A108 Adam Street, New York, NY 535022</p>
+                <h3>Alamat</h3>
+                <p>Jl. Setiabudi, Bandung</p>
               </div>
             </div><!-- End Info Item -->
 
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
               <i class="bi bi-telephone flex-shrink-0"></i>
               <div>
-                <h3>Call Us</h3>
-                <p>+1 5589 55488 55</p>
+                <h3>Kirim pesan</h3>
+                <p>+62 851-7994-1439</p>
               </div>
             </div><!-- End Info Item -->
 
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
               <i class="bi bi-envelope flex-shrink-0"></i>
               <div>
-                <h3>Email Us</h3>
-                <p>info@example.com</p>
+                <h3>Email kami</h3>
+                <p>geoverseid@gmail.com</p>
               </div>
             </div><!-- End Info Item -->
+            
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-whatsapp flex-shrink-0"></i>
+              <div>
+                <h3>WA Kami</h3>
+                <p>
+                  <a href="https://wa.me/6285179941439?text=Halo%20GeoverseID%2C%20saya%20ingin%20bertanya%20tentang%20GeoverseIDclass."
+                    target="_blank" class="btn btn-success">
+                    Chat via WhatsApp
+                  </a>
+                </p>
+              </div>
+            </div>
 
           </div>
 
@@ -217,9 +253,69 @@
             <form action="https://formspree.io/f/xjkeerwb" method="POST" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
               <div class="row gy-4">
 
+                <!-- Nama Pendaftar -->
+                <div class="col-md-6">
+                <input type="text" name="name" class="form-control" placeholder="Nama Pendaftar *" required>
+                </div>
+
+                <!-- Email Pendaftar (Reply-To) -->
+                <div class="col-md-6">
+                <input type="email" name="email" class="form-control" placeholder="Email Pendaftar *" required>
+                </div>
+
+                <!-- Nomor WhatsApp Pendaftar -->
+                <div class="col-md-6">
+                <input type="tel" name="whatsapp" class="form-control"
+                  placeholder="Nomor WhatsApp  * (contoh: +628123456789)" required>
+                </div>
+
+                <!-- Usia -->
+                <div class="col-md-6">
+                <input type="number" name="usia" class="form-control" min="7" max="40"
+                  placeholder="Usia * (7–40)" required>
+                </div>
+
+                <!-- Pilih Kursus -->
+                <div class="col-md-6">
+                <select name="kursus" class="form-control" required>
+                  <option value="" selected disabled>Pilih Kursus *</option>
+                  <option value="Basic Koding - Python">Basic Coding - Python</option>
+                  <option value="Intermediate Koding - Kecerdasan Artificial">Intermediate Coding - Kecerdasan Artificial</option>
+                  <option value="Advance Koding - Kecerdasan Artificial">Advanced Coding - Kecerdasan Artificial</option>
+                </select>
+                </div>
+
+                <!-- Kota Domisili -->
+                <div class="col-md-6">
+                <input type="text" name="kota" class="form-control" placeholder="Kota Domisili *" required>
+                </div>
+
+                <!-- Kursus/background apa yang pernah kamu pelajari? -->
+                <div class="col-md-6">
+                <input type="text" name="sumber" class="form-control"
+                  placeholder="Kursus/background apa yang pernah kamu pelajari? *" required>
+                </div>
+
+                <!-- Darimana Anda Mengetahui Tentang GeoverseID Class? -->
+                <div class="col-md-6">
+                <input type="text" name="sumber" class="form-control"
+                  placeholder="Darimana Anda Mengetahui Tentang GeoverseID Class *" required>
+                </div>
+
+                <!-- (Opsional) Catatan tambahan dari orangtua -->
+                <textarea name="catatan" class="form-control" rows="4" placeholder="Catatan tambahan (opsional)"></textarea>
+
+                <!-- This field is what Formspree will receive as the full message -->
+                <div class="col-md-6">
+                <textarea name="message" hidden></textarea>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" name="_gotcha" style="display:none">
+
+                <!--
                 <div class="col-md-6">
                   <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                  <!-- <input type="hidden" name="_subject" value="New contact from GeoverseID"> -->
                 </div>
 
                 <div class="col-md-6 ">
@@ -233,15 +329,13 @@
                 <div class="col-md-12">
                   <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
                 </div>
-
-                <!-- Simple honeypot -->
-                <input type="text" name="_gotcha" style="display:none">
+                -->
                 <div class="col-md-12 text-center">
                   <div class="loading">Loading</div>
                   <div class="error-message"></div>
                   <div class="sent-message">Your message has been sent. Thank you!</div>
 
-                  <button type="submit">Send Message</button>
+                  <button type="submit">Kirim Pesan</button>
                 </div>
 
               </div>
@@ -257,7 +351,7 @@
   </main>
 
   <footer id="footer" class="footer position-relative light-background">
-
+  <!--
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
@@ -265,10 +359,10 @@
             <span class="sitename">Mentor</span>
           </a>
           <div class="footer-contact pt-3">
-            <p>A108 Adam Street</p>
-            <p>New York, NY 535022</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-            <p><strong>Email:</strong> <span>info@example.com</span></p>
+            <p>Setiabudi Street</p>
+            <p>Bandung</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+62 851-7994-1439</span></p>
+            <p><strong>Email:</strong> <span>geoverseid@gmail.com</span></p>
           </div>
           <div class="social-links d-flex mt-4">
             <a href=""><i class="bi bi-twitter-x"></i></a>
@@ -313,9 +407,9 @@
 
       </div>
     </div>
-
+  -->
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">GeoverseID</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
         <!-- All the links in the footer should remain intact. -->
         <!-- You can delete the links only if you've purchased the pro version. -->
@@ -324,7 +418,6 @@
         Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       </div>
     </div>
-
   </footer>
 
   <!-- Scroll Top -->
